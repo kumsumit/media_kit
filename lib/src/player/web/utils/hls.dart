@@ -4,9 +4,10 @@
 /// All rights reserved.
 /// Use of this source code is governed by MIT license that can be found in the LICENSE file.
 library;
+
 import 'dart:async';
-import 'dart:html' as html;
-import 'package:js/js.dart' as js;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 import 'package:synchronized/synchronized.dart';
 
 // --------------------------------------------------
@@ -16,7 +17,7 @@ import 'package:synchronized/synchronized.dart';
 /// HLS
 /// ---
 ///
-/// Adds [HLS.js](https://github.com/video-dev/hls.js/) to the HTML document using [html.ScriptElement].
+/// Adds [HLS.js](https://github.com/video-dev/hls.js/) to the HTML document using [web.HTMLScriptElement].
 ///
 /// {@endtemplate}
 abstract class HLS {
@@ -27,7 +28,7 @@ abstract class HLS {
       }
       final completer = Completer();
       try {
-        final script = html.ScriptElement()
+        final script = web.HTMLScriptElement()
           ..async = true
           ..charset = 'utf-8'
           ..type = 'text/javascript'
@@ -44,12 +45,12 @@ abstract class HLS {
           }
         });
 
-        html.HeadElement? head = html.document.head;
+        web.HTMLHeadElement? head = web.document.head;
         if (head == null) {
-          head = html.HeadElement();
-          html.document.append(head);
+          head = web.HTMLHeadElement();
+          web.document.appendChild(head);
         }
-        head.append(script);
+        head.appendChild(script);
       } catch (_) {
         if (!completer.isCompleted) {
           completer.completeError(Exception('Failed to load HLS.js'));
@@ -66,9 +67,9 @@ abstract class HLS {
   }
 
   static const String kHLSAsset =
-      'assets/packages/media_kit/assets/web/hls1.4.10.js';
+      'assets/packages/media_kit/assets/web/hls1.6.13.js';
   static const String kHLSCDN =
-      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.js';
+      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.13/hls.js';
 
   static final Lock _lock = Lock();
   static bool _initialized = false;
@@ -76,18 +77,24 @@ abstract class HLS {
 
 // --------------------------------------------------
 
-@js.JS('Hls.isSupported')
+@JS('Hls.isSupported')
 external bool isHLSSupported();
 
-@js.JS()
-@js.staticInterop
-class Hls {
+@JS()
+extension type Hls._(JSObject _) implements JSObject {
   external factory Hls();
-}
 
-extension ExtensionHls on Hls {
   external void loadSource(String src);
-  external void attachMedia(html.VideoElement video);
+  void attachMedia(Object video) {
+    final jsVideo = video.jsify();
+    if (jsVideo == null) {
+      throw ArgumentError.value(video, 'video', 'Could not convert to JS');
+    }
+    _attachMedia(jsVideo);
+  }
+
+  @JS('attachMedia')
+  external void _attachMedia(JSAny video);
 }
 
 // --------------------------------------------------

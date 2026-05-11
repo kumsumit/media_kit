@@ -3,6 +3,7 @@ description: A cross-platform video player & audio player for Flutter & Dart. Pe
 homepage: https://github.com/media-kit/media-kit
 repository: https://github.com/media-kit/media-kit
 version: 1.1.11
+publish_to: none
 
 screenshots:
   - description: "package:media_kit running on Android (visible controls)"
@@ -29,23 +30,24 @@ topics:
   - cross-platform
 
 environment:
-  sdk: ">=3.7.0 <4.0.0"
+  sdk: ">=3.11.0 <4.0.0"
 
 dependencies:
-  meta: ^1.16.0
+  meta: ^1.17.0
   path: ^1.9.1
-  image: ^4.5.4
-  uri_parser: ^3.0.0
+  image:
+    git: https://github.com/kumsumit/image.git
+  uri_parser: ^3.0.2
   collection: ^1.19.1
   synchronized: ^3.3.1
-  uuid: ">=4.5.1 <5.0.0"
-  http: ">=1.4.0 <2.0.0"
+  uuid: ">=4.5.3 <5.0.0"
+  http: ">=1.6.0 <2.0.0"
   safe_local_storage: ^2.0.1
-  universal_platform: ^1.0.0+1
+  universal_platform: ^1.1.0
   web: ^1.1.1
 dev_dependencies:
   test: ^1.26.0
-  lints: ^5.0.0
+  lints: ^6.1.0
 
 ffigen:
   name: MPV
