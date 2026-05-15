@@ -47,6 +47,7 @@ import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 void nativeEnsureInitialized({String? libmpv}) {
   AndroidHelper.ensureInitialized();
   NativeLibrary.ensureInitialized(libmpv: libmpv);
+  if (Platform.isAndroid) return;
   InitializerNativeEventLoop.ensureInitialized();
 }
 
